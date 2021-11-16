@@ -10,7 +10,7 @@ var usersRouter = require('./routes/users');
 
 var app = express();
 
-const mongoDB = 'mongodb://127.0.0.1/my_database';
+const mongoDB = 'mongodb+srv://tomas_so_cool:HHHgR2FXO9NqqWGs@cluster0.bktmi.mongodb.net/grocery-store?retryWrites=true&w=majority';
 mongoose.connect(mongoDB, {useNewUrlParser: true, useUnifiedTopology: true});
 /* The useNewUrlParser option exists simply as a fallback in case the new parser
 has a bug.  useUnifiedTopology should gnrly be set to true, since it opts into using
