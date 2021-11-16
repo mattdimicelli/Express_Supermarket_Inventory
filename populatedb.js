@@ -10,7 +10,7 @@ if (!userArgs[0].startsWith('mongodb')) {
     return
 }
 */
-var async = require('async')
+
 const Item = require('./models/Item');
 const ItemInstance = require('./models/ItemInstance');
 const Customer = require('./models/Customer');
@@ -28,7 +28,7 @@ const items = []
 const iteminstances = []
 const customers = []
 
-function itemCreate({name = null, department = null, description = null, pricePerUnit = null, pricePerPound = null, brand = null, cb = null}) {
+function itemCreate({name = null, department = null, description = null, pricePerUnit = null, pricePerPound = null, brand = null}) {
   let itemdetail = {name, department };
   if (description !== null) itemdetail.description = description;
   if (pricePerUnit !== null) itemdetail.pricePerUnit = pricePerUnit;
@@ -36,153 +36,101 @@ function itemCreate({name = null, department = null, description = null, pricePe
   if (brand !== null) itemdetail.brand = brand;
   
   const item = new Item(itemdetail);
-       
-  item.save(function (err) {
-    if (err) {
-      cb(err, null)
-      return
-    }
-    console.log('New Item: ' + item);
-    items.push(item);
-    cb(null, item);
+  
+  return new Promise((resolve, reject) => {
+    item.save()
+      .then(savedItem => {
+        console.log('New Item: ' + savedItem);
+        items.push(savedItem);
+        resolve();
+      })
+      .catch(err => reject(err))
   });
 }
 
-function itemInstanceCreate({item = null, expiration = null, status = null, customer = null, dateOfSale = null, cb = null}) {
+function itemInstanceCreate({item = null, expiration = null, status = null, customer = null, dateOfSale = null }) {
   let iteminstancedetail = {item, status};
   if (expiration !== null) iteminstancedetail.expiration = expiration;
   if (customer !== null) iteminstancedetail.customer = customer;
   if (dateOfSale !== null) iteminstancedetail.dateOfSale = dateOfSale;
   const iteminstance = new ItemInstance(iteminstancedetail);
-       
-  iteminstance.save(function (err) {
-    if (err) {
-      cb(err, null);
-      return;
-    }
-    console.log('New ItemInstance: ' + iteminstance);
-    iteminstances.push(iteminstance);
-    cb(null, iteminstance);
-  }   );
+  
+  return new Promise((resolve, reject) => {
+    iteminstance.save()
+    .then(savedItemInstance => {
+      console.log('New ItemInstance: ' + iteminstance);
+      iteminstances.push(iteminstance);
+      resolve();
+    })
+    .catch(err => reject(err))
+  });
 }
 
-function customerCreate({firstName = null, lastName = null, telephone = null, email = null, address = null, cb = null}) {
+function customerCreate({firstName = null, lastName = null, telephone = null, email = null, address = null}) {
   let customerdetail = { firstName, lastName, telephone };
   if (email !== null) customerdetail.email = email;
   if (address !== null) customerdetail.address = address;
     
   const customer = new Customer(customerdetail);    
-  customer.save(function (err) {
-    if (err) {
-      cb(err, null)
-      return
-    }
-    console.log('New Customer: ' + customer);
-    customers.push(customer)
-    cb(null, customer)
-  }  );
+  return new Promise((resolve, reject) => {
+    customer.save()
+    .then(savedCustomer => {
+      console.log('New Customer: ' + customer);
+      customers.push(customer);
+      resolve();
+    })
+    .catch(err => reject(err));
+  });
 }
 
-function createItems(cb) {
-  async.series([
-    function(callback) {
-      itemCreate({name: 'apple, gala', department: 'Produce', pricePerPound: 0.83, cb: callback});
-    },
-    function(callback) {
-      itemCreate({name: 'grapes', department: 'Produce', description: null, pricePerUnit: null, pricePerPound: 1.28, brand: null, cb: callback});
-    },
-    function(callback) {
-      itemCreate({name: "Reynolds Wrap, HEAVY DUTY", department: 'Paper Goods', description: '50 sq ft', pricePerUnit: 3.97, pricePerPound: null, brand: 'Reynolds', cb: callback});
-    },
-    function(callback) {
-      itemCreate({name: 'Talenti Gelato, chocolate peanut butter cup', department: 'Frozen', description: null, pricePerUnit: 4.98, pricePerPound: null, brand: 'Talenti', cb: callback});
-    },
-    function(callback) {
-      itemCreate({name: "Crunchy Breaded Fish Sticks", department: 'Frozen', description: null, pricePerUnit: 6.48, pricePerPound: null, brand: "Gorton's", cb: callback});
-    },
-    function(callback) {
-      itemCreate({name: 'Lactaid 1% Calcium Fortified', department: 'Dairy', description: null, pricePerUnit: 3.89, pricePerPound: null, brand: 'Lactaid', cb: callback});
-    }, 
-    function(callback) {
-      itemCreate({name: 'mussels', department: 'Meat and Seafood', description: 'wild caught', pricePerUnit: null, pricePerPound: 4.99, brand: null, cb: callback});
-    },
-    function(callback) {
-      itemCreate({name: 'Colgate Total Advanced Whitening Toothpaste', department: 'Health and Beauty', description: '6.4oz', pricePerUnit: 3.98, pricePerPound: null, brand: 'Colgate', cb: callback});
-    },
-  ], 
-  cb); //optional callback
+function createItems() {
+    return new Promise((resolve, reject) => {
+      itemCreate({name: 'apple, gala', department: 'Produce', pricePerPound: 0.83, })
+      .then(() => itemCreate({name: 'grapes', department: 'Produce', description: null, pricePerUnit: null, pricePerPound: 1.28, brand: null}))
+      .then(() => itemCreate({name: "Reynolds Wrap, HEAVY DUTY", department: 'Paper Goods', description: '50 sq ft', pricePerUnit: 3.97, pricePerPound: null, brand: 'Reynolds'}))
+      .then(() => itemCreate({name: 'Talenti Gelato, chocolate peanut butter cup', department: 'Frozen', description: null, pricePerUnit: 4.98, pricePerPound: null, brand: 'Talenti',}))
+      .then(() => itemCreate({name: "Crunchy Breaded Fish Sticks", department: 'Frozen', description: null, pricePerUnit: 6.48, pricePerPound: null, brand: "Gorton's",}))
+      .then(() => itemCreate({name: 'Lactaid 1% Calcium Fortified', department: 'Dairy', description: null, pricePerUnit: 3.89, pricePerPound: null, brand: 'Lactaid',}))
+      .then(() => itemCreate({name: 'mussels', department: 'Meat and Seafood', description: 'wild caught', pricePerUnit: null, pricePerPound: 4.99, brand: null,}))
+      .then(() => itemCreate({name: 'Colgate Total Advanced Whitening Toothpaste', department: 'Health and Beauty', description: '6.4oz', pricePerUnit: 3.98, pricePerPound: null, brand: 'Colgate',}))
+      .then(() => resolve())
+
+      .catch(err => reject(err))
+    });
 }
 
-function createItemInstances(cb) {
-    async.parallel([
-        function(callback) {
-          itemInstanceCreate({item: items[0], status: 'In Stock', cb: callback});
-        },
-        function(callback) {
-          itemInstanceCreate({item: items[1], status: 'In Stock', cb: callback});
-        },
-        function(callback) {
-          itemInstanceCreate({item: items[2], status: 'Damaged', cb: callback});
-        },
-        function(callback) {
-          itemInstanceCreate({item: items[2], status: 'In Stock', cb: callback});
-        },
-        function(callback) {
-          itemInstanceCreate({item: items[2], status: 'In Stock', cb: callback});
-        },
-        function(callback) {
-          itemInstanceCreate({item: items[3], expiration: new Date().setMonth(11), status: 'In Stock', cb: callback});
-        },
-        function(callback) {
-          itemInstanceCreate({item: items[4], expiration: new Date().setFullYear(2022, 5), status: 'In Stock', cb: callback});
-        },
-        function(callback) {
-          itemInstanceCreate({item: items[5], expiration: new Date().setDate(29), status: 'In Stock', cb: callback});
-        },
-        function(callback) {
-          itemInstanceCreate({item: items[5], customer: customers[1], expiration: new Date().setDate(29), status: 'Reserved', cb: callback});
-        },
-        function(callback) {
-          itemInstanceCreate({item: items[6], expiration: new Date().setDate(20), status: 'In Stock', cb: callback});
-        }
-        ],
-        // optional callback
-        cb);
+function createItemInstances() {
+  return Promise.all([
+    itemInstanceCreate({item: items[0], status: 'In Stock' }),
+    itemInstanceCreate({item: items[1], status: 'In Stock' }),
+    itemInstanceCreate({item: items[2], status: 'Damaged' }),
+    itemInstanceCreate({item: items[2], status: 'In Stock' }),
+    itemInstanceCreate({item: items[2], status: 'In Stock' }),
+    itemInstanceCreate({item: items[3], expiration: new Date().setMonth(11), status: 'In Stock' }),
+    itemInstanceCreate({item: items[4], expiration: new Date().setFullYear(2022, 5), status: 'In Stock' }),
+    itemInstanceCreate({item: items[5], expiration: new Date().setDate(29), status: 'In Stock' }),
+    itemInstanceCreate({item: items[5], customer: customers[1], expiration: new Date().setDate(29), status: 'Reserved' }),
+    itemInstanceCreate({item: items[6], expiration: new Date().setDate(20), status: 'In Stock' }),
+  ]);
 }
 
-
-function createCustomers(cb) {
-    async.parallel([
-        function(callback) {
-          customerCreate({firstName: 'Tokyo', lastName: 'Sexwale', telephone: '333-333-3333', address: 'South Africa', cb: callback});
-        },
-        function(callback) {
-          customerCreate({firstName: 'Beezow Doo-Doo', lastName: 'Zoppitybop-Bop-Bop', telephone: '666-666-6666', email: 'jeffreywilschke@yahoo.com', cb: callback});
-        },
-        ],
-        // Optional callback
-        cb);
+function createCustomers() {
+  return Promise.all([
+    customerCreate({firstName: 'Tokyo', lastName: 'Sexwale', telephone: '333-333-3333', address: 'South Africa'}),
+    customerCreate({firstName: 'Beezow Doo-Doo', lastName: 'Zoppitybop-Bop-Bop', telephone: '666-666-6666', email: 'jeffreywilschke@yahoo.com'}),
+  ]);
 }
 
+createItems()
+.then(() => createItemInstances())
+.then(() => createCustomers())
+.then(() => {
+  console.log('ItemInstances: ' + iteminstances);
+})
+.catch(err => console.error('FINAL ERROR: ' + err))
+.finally(() => mongoose.connection.close());
 
-
-async.series([
-    createItems,
-    createItemInstances,
-    createCustomers,
-],
-// Optional callback
-function(err, results) {
-    if (err) {
-        console.log('FINAL ERR: '+ err);
-    }
-    else {
-        console.log('ItemInstances: '+ iteminstances);
-        
-    }
-    // All done, disconnect from database
-    mongoose.connection.close();
-});
+  
 
 
 
