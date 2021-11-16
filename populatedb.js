@@ -86,28 +86,28 @@ function customerCreate({firstName = null, lastName = null, telephone = null, em
 function createItems(cb) {
   async.series([
     function(callback) {
-      itemCreate({name = 'apple, gala', department = 'Produce', description = null, pricePerUnit = null, pricePerPound = 0.83, brand = null, cb = callback});
+      itemCreate({name: 'apple, gala', department: 'Produce', pricePerPound: 0.83, cb: callback});
     },
     function(callback) {
-      itemCreate({name = 'grapes', department = 'Produce', description = null, pricePerUnit = null, pricePerPound = 1.28, brand = null, cb = callback});
+      itemCreate({name: 'grapes', department: 'Produce', description: null, pricePerUnit: null, pricePerPound: 1.28, brand: null, cb: callback});
     },
     function(callback) {
-      itemCreate({name = "Reynolds Wrap, HEAVY DUTY", department = 'Paper Goods', description = '50 sq ft', pricePerUnit = 3.97, pricePerPound = null, brand = 'Reynolds', cb = callback});
+      itemCreate({name: "Reynolds Wrap, HEAVY DUTY", department: 'Paper Goods', description: '50 sq ft', pricePerUnit: 3.97, pricePerPound: null, brand: 'Reynolds', cb: callback});
     },
     function(callback) {
-      itemCreate({name = 'Talenti Gelato, chocolate peanut butter cup', department = 'Frozen', description = null, pricePerUnit = 4.98, pricePerPound = null, brand = 'Talenti', cb = callback});
+      itemCreate({name: 'Talenti Gelato, chocolate peanut butter cup', department: 'Frozen', description: null, pricePerUnit: 4.98, pricePerPound: null, brand: 'Talenti', cb: callback});
     },
     function(callback) {
-      itemCreate({name = "Crunchy Breaded Fish Sticks", department = 'Frozen', description = null, pricePerUnit = 6.48, pricePerPound = null, brand = "Gorton's", cb = callback});
+      itemCreate({name: "Crunchy Breaded Fish Sticks", department: 'Frozen', description: null, pricePerUnit: 6.48, pricePerPound: null, brand: "Gorton's", cb: callback});
     },
     function(callback) {
-      itemCreate({name = 'Lactaid 1% Calcium Fortified', department = 'Dairy', description = null, pricePerUnit = 3.89, pricePerPound = null, brand = 'Lactaid', cb = callback});
+      itemCreate({name: 'Lactaid 1% Calcium Fortified', department: 'Dairy', description: null, pricePerUnit: 3.89, pricePerPound: null, brand: 'Lactaid', cb: callback});
     }, 
     function(callback) {
-      itemCreate({name = 'mussels', department = 'Meat and Seafood', description = 'wild caught', pricePerUnit = null, pricePerPound = 4.99, brand = null, cb = callback});
+      itemCreate({name: 'mussels', department: 'Meat and Seafood', description: 'wild caught', pricePerUnit: null, pricePerPound: 4.99, brand: null, cb: callback});
     },
     function(callback) {
-      itemCreate({name = 'Colgate Total Advanced Whitening Toothpaste', department = 'Health and Beauty', description = '6.4oz', pricePerUnit = 3.98, pricePerPound = null, brand = 'Colgate', cb = callback});
+      itemCreate({name: 'Colgate Total Advanced Whitening Toothpaste', department: 'Health and Beauty', description: '6.4oz', pricePerUnit: 3.98, pricePerPound: null, brand: 'Colgate', cb: callback});
     },
   ], 
   cb); //optional callback
@@ -116,34 +116,34 @@ function createItems(cb) {
 function createItemInstances(cb) {
     async.parallel([
         function(callback) {
-          itemInstanceCreate({item = items[0], status = 'In Stock', cb = callback});
+          itemInstanceCreate({item: items[0], status: 'In Stock', cb: callback});
         },
         function(callback) {
-          itemInstanceCreate({item = items[1], status = 'In Stock', cb = callback});
+          itemInstanceCreate({item: items[1], status: 'In Stock', cb: callback});
         },
         function(callback) {
-          itemInstanceCreate({item = items[2], status = 'Damaged', cb = callback});
+          itemInstanceCreate({item: items[2], status: 'Damaged', cb: callback});
         },
         function(callback) {
-          itemInstanceCreate({item = items[2], status = 'In Stock', cb = callback});
+          itemInstanceCreate({item: items[2], status: 'In Stock', cb: callback});
         },
         function(callback) {
-          itemInstanceCreate({item = items[2], status = 'In Stock', cb = callback});
+          itemInstanceCreate({item: items[2], status: 'In Stock', cb: callback});
         },
         function(callback) {
-          itemInstanceCreate({item = items[3], expiration = new Date().setMonth(11), status = 'In Stock', cb = callback});
+          itemInstanceCreate({item: items[3], expiration: new Date().setMonth(11), status: 'In Stock', cb: callback});
         },
         function(callback) {
-          itemInstanceCreate({item = items[4], expiration = new Date().setFullYear(2022, 5), status = 'In Stock', cb = callback});
+          itemInstanceCreate({item: items[4], expiration: new Date().setFullYear(2022, 5), status: 'In Stock', cb: callback});
         },
         function(callback) {
-          itemInstanceCreate({item = items[5], expiration = new Date().setDate(29), status = 'In Stock', cb = callback});
+          itemInstanceCreate({item: items[5], expiration: new Date().setDate(29), status: 'In Stock', cb: callback});
         },
         function(callback) {
-          itemInstanceCreate({item = items[5], customer = customers[1], expiration = new Date().setDate(29), status = 'Reserved', cb = callback});
+          itemInstanceCreate({item: items[5], customer: customers[1], expiration: new Date().setDate(29), status: 'Reserved', cb: callback});
         },
         function(callback) {
-          itemInstanceCreate({item = items[6], expiration = new Date().setDate(20), status = 'In Stock', cb = callback});
+          itemInstanceCreate({item: items[6], expiration: new Date().setDate(20), status: 'In Stock', cb: callback});
         }
         ],
         // optional callback
@@ -154,10 +154,10 @@ function createItemInstances(cb) {
 function createCustomers(cb) {
     async.parallel([
         function(callback) {
-          customerCreate({firstName = 'Tokyo', lastName = 'Sexwale', telephone = '333-333-3333', address = 'South Africa', cb = callback});
+          customerCreate({firstName: 'Tokyo', lastName: 'Sexwale', telephone: '333-333-3333', address: 'South Africa', cb: callback});
         },
         function(callback) {
-          customerCreate({firstName = 'Beezow Doo-Doo', lastName = 'Zoppitybop-Bop-Bop', telephone = '666-666-6666', email = 'jeffreywilschke@yahoo.com', cb = callback});
+          customerCreate({firstName: 'Beezow Doo-Doo', lastName: 'Zoppitybop-Bop-Bop', telephone: '666-666-6666', email: 'jeffreywilschke@yahoo.com', cb: callback});
         },
         ],
         // Optional callback
