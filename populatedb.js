@@ -28,7 +28,7 @@ const items = []
 const iteminstances = []
 const customers = []
 
-function itemCreate({name = null, department = null, description = null, pricePerUnit = null, pricePerPound = null, brand = null}) {
+async function itemCreate({name = null, department = null, description = null, pricePerUnit = null, pricePerPound = null, brand = null}) {
   let itemdetail = {name, department };
   if (description !== null) itemdetail.description = description;
   if (pricePerUnit !== null) itemdetail.pricePerUnit = pricePerUnit;
@@ -37,66 +37,47 @@ function itemCreate({name = null, department = null, description = null, pricePe
   
   const item = new Item(itemdetail);
   
-  return new Promise((resolve, reject) => {
-    item.save()
-      .then(savedItem => {
-        console.log('New Item: ' + savedItem);
-        items.push(savedItem);
-        resolve();
-      })
-      .catch(err => reject(err))
-  });
+  const savedItem = await item.save();
+  console.log('New Item: ' + savedItem);
+  items.push(savedItem);
+  return;
 }
 
-function itemInstanceCreate({item = null, expiration = null, status = null, customer = null, dateOfSale = null }) {
+async function itemInstanceCreate({item = null, expiration = null, status = null, customer = null, dateOfSale = null }) {
   let iteminstancedetail = {item, status};
   if (expiration !== null) iteminstancedetail.expiration = expiration;
   if (customer !== null) iteminstancedetail.customer = customer;
   if (dateOfSale !== null) iteminstancedetail.dateOfSale = dateOfSale;
   const iteminstance = new ItemInstance(iteminstancedetail);
   
-  return new Promise((resolve, reject) => {
-    iteminstance.save()
-    .then(savedItemInstance => {
-      console.log('New ItemInstance: ' + iteminstance);
-      iteminstances.push(iteminstance);
-      resolve();
-    })
-    .catch(err => reject(err))
-  });
+  const savedItemInstance = await iteminstance.save();
+  console.log('New ItemInstance: ' + iteminstance);
+  iteminstances.push(iteminstance);
+  return;
 }
 
-function customerCreate({firstName = null, lastName = null, telephone = null, email = null, address = null}) {
+async function customerCreate({firstName = null, lastName = null, telephone = null, email = null, address = null}) {
   let customerdetail = { firstName, lastName, telephone };
   if (email !== null) customerdetail.email = email;
   if (address !== null) customerdetail.address = address;
     
   const customer = new Customer(customerdetail);    
-  return new Promise((resolve, reject) => {
-    customer.save()
-    .then(savedCustomer => {
-      console.log('New Customer: ' + customer);
-      customers.push(customer);
-      resolve();
-    })
-    .catch(err => reject(err));
-  });
+  const savedCustomer = await customer.save();
+  console.log('New Customer: ' + customer);
+  customers.push(customer);
+  return;
 }
 
-function createItems() {
-    return new Promise((resolve, reject) => {
-      itemCreate({name: 'apple, gala', department: 'Produce', pricePerPound: 0.83, })
-      .then(() => itemCreate({name: 'grapes', department: 'Produce', description: null, pricePerUnit: null, pricePerPound: 1.28, brand: null}))
-      .then(() => itemCreate({name: "Reynolds Wrap, HEAVY DUTY", department: 'Paper Goods', description: '50 sq ft', pricePerUnit: 3.97, pricePerPound: null, brand: 'Reynolds'}))
-      .then(() => itemCreate({name: 'Talenti Gelato, chocolate peanut butter cup', department: 'Frozen', description: null, pricePerUnit: 4.98, pricePerPound: null, brand: 'Talenti',}))
-      .then(() => itemCreate({name: "Crunchy Breaded Fish Sticks", department: 'Frozen', description: null, pricePerUnit: 6.48, pricePerPound: null, brand: "Gorton's",}))
-      .then(() => itemCreate({name: 'Lactaid 1% Calcium Fortified', department: 'Dairy', description: null, pricePerUnit: 3.89, pricePerPound: null, brand: 'Lactaid',}))
-      .then(() => itemCreate({name: 'mussels', department: 'Meat and Seafood', description: 'wild caught', pricePerUnit: null, pricePerPound: 4.99, brand: null,}))
-      .then(() => itemCreate({name: 'Colgate Total Advanced Whitening Toothpaste', department: 'Health and Beauty', description: '6.4oz', pricePerUnit: 3.98, pricePerPound: null, brand: 'Colgate',}))
-      .then(() => resolve())
-
-      .catch(err => reject(err))
-    });
+async function createItems() {
+      await itemCreate({name: 'apple, gala', department: 'Produce', pricePerPound: 0.83, });
+      await itemCreate({name: 'grapes', department: 'Produce', description: null, pricePerUnit: null, pricePerPound: 1.28, brand: null});
+      await itemCreate({name: "Reynolds Wrap, HEAVY DUTY", department: 'Paper Goods', description: '50 sq ft', pricePerUnit: 3.97, pricePerPound: null, brand: 'Reynolds'});
+      await itemCreate({name: 'Talenti Gelato, chocolate peanut butter cup', department: 'Frozen', description: null, pricePerUnit: 4.98, pricePerPound: null, brand: 'Talenti',});
+      await itemCreate({name: "Crunchy Breaded Fish Sticks", department: 'Frozen', description: null, pricePerUnit: 6.48, pricePerPound: null, brand: "Gorton's",});
+      await itemCreate({name: 'Lactaid 1% Calcium Fortified', department: 'Dairy', description: null, pricePerUnit: 3.89, pricePerPound: null, brand: 'Lactaid',});
+      await itemCreate({name: 'mussels', department: 'Meat and Seafood', description: 'wild caught', pricePerUnit: null, pricePerPound: 4.99, brand: null,});
+      await itemCreate({name: 'Colgate Total Advanced Whitening Toothpaste', department: 'Health and Beauty', description: '6.4oz', pricePerUnit: 3.98, pricePerPound: null, brand: 'Colgate',});
+      return;
 }
 
 function createItemInstances() {
@@ -121,14 +102,19 @@ function createCustomers() {
   ]);
 }
 
-createItems()
-.then(() => createItemInstances())
-.then(() => createCustomers())
-.then(() => {
-  console.log('ItemInstances: ' + iteminstances);
-})
-.catch(err => console.error('FINAL ERROR: ' + err))
-.finally(() => mongoose.connection.close());
+(async function() {
+  try {
+    await createItems();
+    await createItemInstances();
+    await createCustomers();
+    console.log('ItemInstances: ' + iteminstances);
+  }
+  catch(err) {
+    console.error('FINAL ERROR: ' + err);
+  }
+  mongoose.connection.close();
+})();
+
 
   
 
