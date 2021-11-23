@@ -1,0 +1,233 @@
+let query = Product.findOne();
+// findOne() returns a query, query is thenable (can be used as a promise)  
+// so,
+const doc = await query;
+//another way of doing the above is:
+const doc = await MyModel.findOne();
+
+const products = await Product.find();
+product = products[0];
+
+// the reason that the queries exist is for chaining.  Ex:
+const doc = await Model.findOne().
+    where('name').equals('Jean-Luc Picard');
+// The above is equivalent to await Model.findOne({ name: 'Jean-Luc Picard' })
+
+
+
+mongoose.model('MyModel', s) === mongoose.connection.model('Mymodel', s)
+
+await doc.validate().catch(err => {
+    error;
+    Object.keys(error.errors)
+})
+
+// change tracking: cuando cambias un documento en JS (ex. doc.name = 'matt' ),
+// mongoose efectúa la operación de actualizar en MongoDB
+
+// getter for email path 
+const userSchema = new mongoose.Schema({ email: String }, { toJSON: { getters: false }});
+userSchema.path('email').get(v => v.replace('@', ' [at] '));
+userSchema.path('email').set(v => v.toLowerCase());
+// formatear datos de MongoDB para API con los getter.  Se usan los getter siempre que
+// se convierte en JSON
+
+
+app.get(async function(req, res) {
+    try {
+        const doc = await Model.findOne();
+        return res.json(doc);  
+    } catch(err) {
+        return res.status(500).json({ message: err.message });
+    }
+});
+
+
+user.get('email', null, { getters: false })
+user.email = 'TEST@gmail.com';
+user.set('email', 'TEST@gmail.com');
+Object.assign(user, { email: 'TEST@gmail.com' });
+
+// makes sense that setters would be applied with update operations because
+// they are used with whichever change tracking, and with change tracking 
+// Mongoose uses the update operators under-the-hood
+
+const { _id } = await User.create({ email: 'test@gmail.com' });
+
+await User.updateOne({ _id }, { email: 'NEW@gmail.com' });
+await User.findOne({ _id }).updateOne({}, { email: })
+
+await Account.updateOne({}, { $inc: { balance: 0.2 } });
+
+
+
+const userSchema2 = Schema({ email: String, domain: String });
+userSchema2.path('email').set(function(v) {
+    const domain = v.slice(v.indexOf('@') + 1);
+    this.set({ domain });
+    return v;
+})
+
+userSchema2.virtual('domain').get(function() {
+    return this.email.slice(this.email.indexOf('@') + 1);
+});
+
+
+const myObject = {
+    toJSON: function() {
+        return 42;
+    }
+};
+JSON.stringify({ prop: myObject }); // {"prop": 42}
+
+
+// Can execuate queries three different ways:
+await query;
+query.then(res => {})
+await query.exec();
+
+// Query operations: 1. reads, 2. updates/replace, 3. deletes, 
+// 4. find and modify ops, and other(distinct, estimatedDocumentCount)
+
+// Query selectors/operators: used to build sophisticated filter params
+// if multipel query selectors, treated as AND
+// ex: { $gt: 50, $lt: 60 }
+
+// Categories of query selectors:
+// 1. Comparison
+// 2. Element selectors: 
+//        a. $exists matches documents that have/don't have a certain prop.
+//        will match properties that are null, just like JS "in" or "hasOwnProperty()"
+//        b. $type matches document based on the type of a prop
+/* 3. Geospatial
+   4.  Array
+   let s = Schema({ comments: [{ user: String, text: String }] });
+   const BlogPost = mongoose.model('BlogPost', s);
+   await BlogPost.create([
+       { comments: [{ user: 'jipcard', text: 'Make it so!' }] },
+        { comments: [{ user: 'wriker', text: 'One, or both?' }] },
+   ]);
+    Mongoose can search within objects in the array:
+   const docs = await BlogPost.find({ 'comments.user': 'jpicard' });
+   docs.length   =>  1
+
+        a. $all   (matches arrays with all of the elements in the array)
+        b. $size
+        c. $elemMatch
+        const $elemMatch = { user: 'jpicard', comment: 'Make it so!' };
+        let docs = await BlogPost.find({ comments: { $elemMatch } });
+        This will look for documents in which the user is jpicard and the comment is
+        make it so in the same document of the array
+        So it will match:
+        { comments: [{ user: 'jpicard', text: 'Make it so!' }] },
+        but not: 
+        comments: [
+            { user: 'wriker', text: 'Make it so!' },
+            { user: 'jpicard', text: 'That\'s my line!' }
+        ]
+
+Update operators:
+Update operators start with '$', but if you provide an update paramater
+that doesn't have any update operators, Mongoose automatically wraps
+the update in the $set update operator.
+Ex:
+const filter = { name: 'Will Riker' };
+let update = { rank: 'Commander' };
+const opts = { new: true };
+let doc = await Character.findOneAndUpdate(filter, update, ops);
+doc.rank => commander
+
+This is equivalent to:
+update = { $set: { rank: 'Commander' }};
+
+    Field update operators (can be used on fields of any type): $set,
+    $unset, $setOnInsert, $min, $max
+
+    The $setOnInsert operator conditionally sets a field, if a new document 
+    is created.  So you can set a field to be set if and when a new doc is created
+
+
+    const update = { $min: { age: 30} };
+    update.$min.age = 28;
+
+    Array update operators:
+        $push: adds element to end of array
+        const schema = Schema({ title: String, tags: [String] });
+        const Post = mongoose.model('BlogPost', schema);
+        const title = 'Introduction to Mongoose';
+        await Post.create({ title, tags: ['Node.js'] });
+        const update = { $push: { tags: 'MongoDB' }};
+        const opts = { new: true };
+        let doc = await Post.findOneAndUpdate({ title }, update, opts);
+
+        $addToSet: same as $push, but skips duplicates
+
+Sort order:
+        Can set via an option :
+        const options = { sort: { name: 1} };
+        let doc = await Character.findOne({}, null, options);
+
+        Or can using Query.prototype.sort():
+        doc = await Character.findOne({}).sort({ name: 1 });
+
+const docs = await Character.find()
+        .sort({ age: 1 })
+        .skip(2)
+        .limit(2);
+docs.map(doc => doc.name);
+
+
+const resultSchema = Schema({ title: String, order: Number });
+const SearchResult = mongoose.model('SearchResult', resultSchema);
+for (let i = 1; i <= 25; i++) {
+    await SearchResult.create({ order: i, title: 'test' + i });
+}
+function getResults(page, resultsPerPage) {
+    return SearchResult.find()
+        .sort({ order: 1 })
+        .skip(page * resultsPerPage)
+        .limit(resultsPerPage);
+}
+const docs = await getResults(1, 10);
+
+Projections:
+Query.prototype.select vs Schema-level projections
+
+Query validation: por defecto Mongoose no valida las consultas, pero lo podía
+hacer si se habilita la opción runValidators:
+    const ops = { runValidators: true };
+    const err = await Character.findOneAndUpdate({}, update, opts)
+        .catch(err => err);
+** Query validators are complicated, must review.  Debido a las limitaciones
+de la validación, generalmente uno debía usar save() para actualizar los
+documentos en vez de updateOne() o findOneAndUpdate() **
+
+
+Middleware (or hooks) are defined on a schema using Schema.prototype.pre() and 
+Schema.prototype.post().  Can be defined for many built-in Mongoose funcs, 
+save() being the most common.
+const schema = Schema({ name: String });
+schema.pre('save', function middleware() {
+    console.log('Saving', this.name);
+});
+const Model = mongoose.model('Test', schema);
+const doc = new Model({ name: 'test' });
+await doc.save();
+    1. Document middleware
+        - 
+
+
+Populate:
+const Group = mongoose.model('Group', Schema{ name: String });
+const Person = mongoose.model('Person', Schema({
+    name: String,
+    group: {
+        type: mongoose.ObjectId,
+        ref: 'Group',
+    },
+}));
+const jedi = await Group.create({ name: 'Jedi Order' });
+await Person.create({ name: 'Luke Skywalker', group: jedi._id });
+
+const doc = await Person.findOne().populate('group');
+doc.group.name

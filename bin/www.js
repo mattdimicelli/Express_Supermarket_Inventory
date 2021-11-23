@@ -4,9 +4,10 @@
  * Module dependencies.
  */
 
-var app = require('../app');
-var debug = require('debug')('grocery-store:server');
-var http = require('http');
+import app from '../app.js';
+import debugNotInvoked from 'debug';
+const debug = debugNotInvoked('grocery-store:server');
+import http from 'http';
 
 /**
  * Get port from environment and store in Express.

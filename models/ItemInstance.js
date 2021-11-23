@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 const Schema = mongoose.Schema;
 
 const ItemInstanceSchema = new Schema({
@@ -9,11 +9,10 @@ const ItemInstanceSchema = new Schema({
     },
     expiration: {
         type: Date,
-        min: [Date.now(), 'Expiration date cannot be prior to today']
     },
     status: {
         type: String,
-        enum: ['In Stock', 'Damaged', 'Sold', 'Reserved'],
+        enum: ['Available', 'Damaged', 'Sold and Reserved'],
         required: [true, 'Must select a status']
     },
     customer: {
@@ -22,7 +21,6 @@ const ItemInstanceSchema = new Schema({
     },
     dateOfSale: {
         type: Date,
-        min: [Date.now(), 'Expiration date cannot be prior to today']
     },
 });
 
@@ -30,4 +28,4 @@ ItemInstanceSchema.virtual('url').get(function() {
     return '/inventory/iteminstance/' + this._id;
 });
 
-module.exports = mongoose.model('ItemInstance', ItemInstanceSchema);
+export default mongoose.model('ItemInstance', ItemInstanceSchema);

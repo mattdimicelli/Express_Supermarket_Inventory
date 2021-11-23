@@ -1,4 +1,5 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
+import ItemInstance from './ItemInstance.js';
 
 const Schema = mongoose.Schema;
 
@@ -7,12 +8,17 @@ const ItemSchema = new Schema({
         type: String,
         required: true,
         trim: true,
-        minLength: 1,
         set: n => n[0].toUpperCase() + n.slice(1) 
     },
     department: {
         type: String,
         required: true,
+        enum: [
+            'Produce', 'Meat and Seafood', 'Beer and Wine', 'Health and Beauty',
+            'Deli/Prepared Foods', 'Front End', 'Floral', 'Cafe', 'Bakery',
+            'Frozen', 'Dairy', 'Beverages', 'Canned/Jarred Goods', 'Baking Goods',
+            'Cleaning', 'Paper Goods'
+        ],
     },     
     description: {
         type: String,
@@ -47,14 +53,18 @@ ItemSchema.virtual('stock', {
 
 // Virtual for number the number of the item instanes "in stock" (eg. available to be sold)
 // This is the virtual that I'm having trouble writing
-// ItemSchema.virtual('stock', {
-//     ref: 'ItemInstance',
-//     localField: '_id',
-//     foreignField: 'item',
-// }).get(function() {
-//     return this.filter(iteminstance => iteminstance.status === 'In Stock').length;
-// });
+ItemSchema.virtual('numberAvailable', {
+    ref: 'ItemInstance',
+    localField: '_id',
+    foreignField: 'item',
+    options: {
+        match: {
+            status: 'Available',
+        },
+    },
+    count: true,
+});
 
 
-module.exports = mongoose.model('Item', ItemSchema);
+export default mongoose.model('Item', ItemSchema);
 

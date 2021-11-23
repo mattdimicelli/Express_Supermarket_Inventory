@@ -1,11 +1,10 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 const Schema = mongoose.Schema;
 
 const CustomerSchema = new Schema({
     firstName: {
         type: String,
         required: [true, 'Must fill in first name'],
-        minLength: [1, 'First name must be at least one character long'],
         trim: true,
         set: n => n[0].toUpperCase() + n.slice(1),
     },
@@ -13,7 +12,6 @@ const CustomerSchema = new Schema({
         type: String,
         required: [true, 'Must fill in last name'],
         trim: true,
-        minLength: [1, 'Last name must be at least one character long'],
         set: n => n[0].toUpperCase() + n.slice(1),
     },
     telephone: {
@@ -24,12 +22,10 @@ const CustomerSchema = new Schema({
     email: {
         type: String,
         trim: true,
-        minLength: [1, 'Email must be at least one character long'],
     },
     address: {
         type: String,
         trim: true,
-        minLength: [1, 'Address must be at least one character long'],
     },
 });
 
@@ -37,4 +33,4 @@ CustomerSchema.virtual('url').get(function(){
     return '/customers/' + this._id;
 });
 
-module.exports = mongoose.model('Customer', CustomerSchema);
+export default mongoose.model('Customer', CustomerSchema);

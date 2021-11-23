@@ -11,13 +11,13 @@ if (!userArgs[0].startsWith('mongodb')) {
 }
 */
 
-const Item = require('./models/Item');
-const ItemInstance = require('./models/ItemInstance');
-const Customer = require('./models/Customer');
+import Item from './models/Item.js';
+import ItemInstance from './models/ItemInstance.js';
+import Customer from './models/Customer.js';
 
 
 
-var mongoose = require('mongoose');
+import mongoose from 'mongoose';
 var mongoDB = userArgs[0];
 mongoose.connect(mongoDB, {useNewUrlParser: true, useUnifiedTopology: true});
 mongoose.Promise = global.Promise;
@@ -82,16 +82,16 @@ async function createItems() {
 
 function createItemInstances() {
   return Promise.all([
-    itemInstanceCreate({item: items[0], status: 'In Stock' }),
-    itemInstanceCreate({item: items[1], status: 'In Stock' }),
+    itemInstanceCreate({item: items[0], status: 'Available' }),
+    itemInstanceCreate({item: items[1], status: 'Available' }),
     itemInstanceCreate({item: items[2], status: 'Damaged' }),
-    itemInstanceCreate({item: items[2], status: 'In Stock' }),
-    itemInstanceCreate({item: items[2], status: 'In Stock' }),
-    itemInstanceCreate({item: items[3], expiration: new Date().setMonth(11), status: 'In Stock' }),
-    itemInstanceCreate({item: items[4], expiration: new Date().setFullYear(2022, 5), status: 'In Stock' }),
-    itemInstanceCreate({item: items[5], expiration: new Date().setDate(29), status: 'In Stock' }),
-    itemInstanceCreate({item: items[5], customer: customers[1], expiration: new Date().setDate(29), status: 'Reserved' }),
-    itemInstanceCreate({item: items[6], expiration: new Date().setDate(20), status: 'In Stock' }),
+    itemInstanceCreate({item: items[2], status: 'Available' }),
+    itemInstanceCreate({item: items[2], status: 'Available' }),
+    itemInstanceCreate({item: items[3], expiration: new Date().setMonth(11), status: 'Available' }),
+    itemInstanceCreate({item: items[4], expiration: new Date().setFullYear(2022, 5), status: 'Available' }),
+    itemInstanceCreate({item: items[5], expiration: new Date().setDate(29), status: 'Available' }),
+    itemInstanceCreate({item: items[5], customer: customers[1], expiration: new Date().setDate(29), status: 'Sold and Reserved' }),
+    itemInstanceCreate({item: items[6], expiration: new Date().setDate(20), status: 'Available' }),
   ]);
 }
 
@@ -102,18 +102,18 @@ function createCustomers() {
   ]);
 }
 
-(async function() {
-  try {
-    await createItems();
-    await createItemInstances();
-    await createCustomers();
-    console.log('ItemInstances: ' + iteminstances);
-  }
-  catch(err) {
-    console.error('FINAL ERROR: ' + err);
-  }
-  mongoose.connection.close();
-})();
+
+try {
+  await createItems();
+  await createItemInstances();
+  await createCustomers();
+  console.log('ItemInstances: ' + iteminstances);
+}
+catch(err) {
+  console.error('FINAL ERROR: ' + err);
+}
+mongoose.connection.close();
+
 
 
   
