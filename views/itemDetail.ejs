@@ -1,0 +1,49 @@
+<%- include('partials/_top') %> 
+
+<title><%- title %></title>
+
+<%- include('partials/_middle') %> 
+
+<h1><%- item.name %> </h1>
+
+<p>
+    <strong>Department: </strong>
+    <a href="<%- item.departmentURL %>"><%- item.department %></a>
+</p>
+<p><strong>Description: </strong><%- item.description %></p>
+<p><strong>P/U: </strong><%- item.pricePerUnit %> </p>
+<p><strong>P/lb: </strong><%- item.pricePerPound %> </p>
+<p><strong>Brand: </strong><%- item.brand %></p>
+<div>
+    <h4>Stock</h4>
+    <% if (itemInstances.length > 0) { %>
+        <% itemInstances.forEach(val => { %>
+            <hr>
+            <% if (val.status === 'Available') { %>
+                <p class="text-available"><%- val.status %> </p>
+            <% } else if (val.status === 'Damaged') { %>
+                <p class="text-damaged"><%- val.status %> </p>
+            <% } else if (val.status === 'Sold and Reserved') { %>
+                <p class="text-sold"><%- val.status %></p>
+            <% } %>
+            <p><strong>Expiration: </strong><%- val.expiration %> </p>
+            <% if (val.status !== 'Sold and Reserved') { %>
+                <p><strong>Customer: </strong><a href="<%- val.customer.url %>"><%- val.customer.fullName %></a></p>
+                <p><strong>Date Sold: </strong><%- val.dateOfSale %></p>
+            <% } %>
+            <p><strong>Id: </strong><a href="<%- val.url %>"><%- val._id %> </a></p>
+        <% }) %>
+    <% } else { %>
+        <p>There is currently no stock of this product.</p>
+    <% } %>
+</div>
+<hr>
+<p>
+    <a href="<%- book.url + '/delete' %>">Delete Product</a>
+</p>
+<p>
+    <a href="<%- book.url + '/update' %>">Modify Product Details</a>
+</p>  
+
+
+<%- include('partials/_bottom') %>

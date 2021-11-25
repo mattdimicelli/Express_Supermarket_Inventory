@@ -2,12 +2,12 @@ import express from 'express';
 const router = express.Router();
 
 // Require Controller Modules
-import * as ItemController from '../controllers/ItemController.js';
-import * as ItemInstanceController from '../controllers/ItemInstanceController.js';
+import * as itemController from '../controllers/itemController.js';
+import * as itemInstanceController from '../controllers/itemInstanceController.js';
 
 // ITEM ROUTES
 // GET Inventory Home Page
-router.get('/', ItemController.index);
+router.get('/', itemController.index);
 
 // GET request to CREATE an item
 router.get('/item/create', itemController.itemCreateGET);

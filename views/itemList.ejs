@@ -1,0 +1,21 @@
+<%- include('partials/_top') %> 
+
+<title><%- title %></title>
+
+<%- include('partials/_middle') %> 
+
+<h1><%- title %></h1>
+
+<ul>
+    <% if(itemList.length > 0) { %> 
+        <% itemList.forEach(item => { %>
+            <li>
+                <a href="<%- item.url %>"><%- item.name %> </a>
+            </li>
+        <% }); %>
+    <% } else { %>
+        <li>There are no products in the inventory system.</li> 
+        <% } %> 
+</ul>
+
+<%- include('partials/_bottom') %>

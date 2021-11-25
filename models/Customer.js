@@ -33,4 +33,8 @@ CustomerSchema.virtual('url').get(function(){
     return '/customers/' + this._id;
 });
 
+CustomerSchema.virtual('fullName').get(function() {
+    return this.lastName + ', ' + this.firstName;
+})
+
 export default mongoose.model('Customer', CustomerSchema);

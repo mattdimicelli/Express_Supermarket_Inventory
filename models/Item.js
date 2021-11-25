@@ -65,6 +65,40 @@ ItemSchema.virtual('numberAvailable', {
     count: true,
 });
 
+ItemSchema.virtual('departmentURL').get(function() {
+    let ending;
+    switch(this.department) {
+        case 'Meat and Seafood':
+            ending = 'meat-seafood';
+            break;
+        case 'Beer and Wine':
+            ending = 'beer-wine';
+            break;
+        case 'Health and Beauty':
+            ending = 'health-beauty';
+            break;
+        case 'Deli/Prepared Foods':
+            ending = 'deli-prepared-foods';
+            break;
+        case 'Front End':
+            ending = 'front-end';
+            break;
+        case 'Canned/Jarred Goods':
+            ending = 'canned';
+            break;
+        case 'Baking Goods':
+            ending = 'baking';
+            break;
+        case 'Paper Goods':
+            ending = 'paper';
+            break;
+        default: 
+            ending = this.department.toLowerCase();
+            break;
+    }
+    return '/inventory/' + ending;
+});
+
 
 export default mongoose.model('Item', ItemSchema);
 
