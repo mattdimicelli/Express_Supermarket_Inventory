@@ -1,3 +1,4 @@
+import nconf from 'nconf';
 import createError from 'http-errors';
 import express from 'express';
 import { dirname } from 'path';
@@ -11,12 +12,12 @@ import indexRouter from './routes/index.js';
 import inventoryRouter from './routes/inventory.js';
 import customersRouter from './routes/customers.js';
 
+nconf.env().file('./config.json');
 var app = express();
 
 const __dirname = fileURLToPath(dirname(import.meta.url));
 
-const mongoDB = 'mongodb+srv://tomas_so_cool:HHHgR2FXO9NqqWGs@cluster0.bktmi.mongodb.net/grocery-store?retryWrites=true&w=majority';
-mongoose.connect(mongoDB, {useNewUrlParser: true, useUnifiedTopology: true});
+mongoose.connect(nconf.get('MONGODB_URI'), {useNewUrlParser: true, useUnifiedTopology: true});
 /* The useNewUrlParser option exists simply as a fallback in case the new parser
 has a bug.  useUnifiedTopology should gnrly be set to true, since it opts into using
 MongoDB's driver's new connection management engine */
